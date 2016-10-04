@@ -12,6 +12,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
         android:text="User Id to be used in demo" />
 
     <EditText
@@ -19,13 +20,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text"
-        android:text="unknown143" />
+        android:text="TESTUSR143" />
 
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:textColor="@color/colorAccent"
         android:text="Amount to be used in demo(Rs.)" />
 
     <EditText
@@ -38,6 +40,9 @@
 
     <Button
         android:id="@+id/id_save"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
