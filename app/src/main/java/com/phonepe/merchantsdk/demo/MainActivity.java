@@ -45,9 +45,6 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static final int CODE_DEBIT = 189;
-    private static final int CODE_CREDIT = 190;
-    private static final int CODE_REGISTER = 191;
 
     @Bind(R.id.id_debit_amount)
     TextView mDebitAmountTextView;
@@ -94,23 +91,6 @@ public class MainActivity extends AppCompatActivity {
         mCreditAmountTextView.setText("Rs. " + CacheUtils.getInstance(this).getAmountForTransaction());
 
         getWalletBalance();
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK && (requestCode == CODE_DEBIT || requestCode == CODE_CREDIT)) {
-            /* Pass it to PhonePe */
-            Bundle extras = data.getExtras();
-            if (extras != null && extras.containsKey(PhonePeResult.KEY_TRANSACTION_ID)) {
-                trackTxnStatus(extras.getString(PhonePeResult.KEY_TRANSACTION_ID));
-            }
-        } else {
-            resultTextView.setVisibility(View.VISIBLE);
-            resultTextView.setText("Failed to complete transaction");
-        }
     }
 
     //*********************************************************************
@@ -181,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                         resultTextView.setText("Wallet Balance: Unknown");
                     } else {
                         Long amountInRs = debitSuggestion.getAvailableBalanceInWallet() / 100;
-                        resultTextView.setText("Wallet Balance:" + amountInRs + "Rs.");
+                        resultTextView.setText("Wallet Balance:" + amountInRs + "Rs");
                     }
                 }
             }
