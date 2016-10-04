@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- This is the way to override the styling -->
+    <style name="MyCustomPhonePeTheme" parent="PhonePe.Theme.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="ph_colorPrimary">@color/colorPrimary</item>
+        <item name="ph_colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="ph_colorAccent">@color/colorAccent</item>
+        <item name="ph_textColor">#51154f</item>
+        <item name="ph_textColorAccent">#51154f</item>
+        <item name="ph_merchantName">Myntra</item>
+        <item name="ph_merchantLogo">
+            http://sqrone.in/wp-content/uploads/2016/04/26-1443262056-myntra-logo-image.jpg
+        </item>
+    </style>
+
+    <style name="PhonePeTheme" parent="MyCustomPhonePeTheme" />
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>
