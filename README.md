@@ -1,4 +1,7 @@
 # MerchantSDKAndroidDemo
+
+[![N|Solid](https://www.phonepe.com/images/generic/phonepe_logo.svg)](https://www.phonepe.com)
+
 Sample application to understand integration of PhonePe Android Merchant SDK
 <br>
 ## Integration
