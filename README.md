@@ -11,3 +11,13 @@ https://github.com/PhonePe/MerchantAndroidSDKDemo/wiki/Android-SDK-Integration
 ## Usage
 
 https://github.com/PhonePe/MerchantAndroidSDKDemo/wiki/API-Usage
+
+
+## Definitions
+
+https://github.com/PhonePe/MerchantAndroidSDKDemo/wiki/Definitions
+
+
+## Release Notes
+
+https://github.com/PhonePe/MerchantAndroidSDKDemo/wiki/Release-Notes
