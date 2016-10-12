@@ -21,6 +21,9 @@ public class CacheUtils {
      */
     private static String sUserIdKey = "key_user_id";
     private static String sAmountKey = "key_amount";
+    private static String sMobileKey = "key_mobile";
+    private static String sEmailKey = "key_email";
+    private static String sNameKey = "key_name";
 
 
     private CacheUtils(Context context) {
@@ -47,6 +50,32 @@ public class CacheUtils {
 
     public String getUserId() {
         return mSharedPreferences.getString(sUserIdKey, "unknown143");
+    }
+
+
+    public void saveMobile(String mobile) {
+        mSharedPreferences.edit().putString(sMobileKey, mobile).apply();
+    }
+
+    public String getMobile() {
+        return mSharedPreferences.getString(sMobileKey, "");
+    }
+
+
+    public void saveName(String mobile) {
+        mSharedPreferences.edit().putString(sNameKey, mobile).apply();
+    }
+
+    public String getName() {
+        return mSharedPreferences.getString(sNameKey, "");
+    }
+
+    public void saveEmail(String mobile) {
+        mSharedPreferences.edit().putString(sEmailKey, mobile).apply();
+    }
+
+    public String getEmail() {
+        return mSharedPreferences.getString(sEmailKey, "test@test.com");
     }
 
 

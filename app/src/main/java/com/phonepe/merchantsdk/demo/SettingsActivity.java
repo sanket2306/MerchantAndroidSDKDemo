@@ -1,5 +1,7 @@
 package com.phonepe.merchantsdk.demo;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
@@ -12,13 +14,20 @@ import butterknife.OnClick;
 
 public class SettingsActivity extends AppCompatActivity {
 
-
     @Bind(R.id.id_user_id)
     EditText mUserIdText;
 
     @Bind(R.id.id_amount)
     EditText mAmountText;
 
+    @Bind(R.id.id_name)
+    EditText mNameText;
+
+    @Bind(R.id.id_mobile)
+    EditText mMobileText;
+
+    @Bind(R.id.id_email)
+    EditText mEmailText;
 
     @OnClick(R.id.id_save)
     void saveUserId() {
@@ -26,6 +35,11 @@ public class SettingsActivity extends AppCompatActivity {
         if (!userId.trim().equals("")) {
             CacheUtils.getInstance(this).saveUserId(userId);
         }
+
+        CacheUtils.getInstance(this).saveMobile(mMobileText.getText().toString());
+        CacheUtils.getInstance(this).saveEmail(mEmailText.getText().toString());
+        CacheUtils.getInstance(this).saveName(mNameText.getText().toString());
+
 
         String amountString = mAmountText.getText().toString();
         if (!amountString.trim().equals("")) {
@@ -37,6 +51,9 @@ public class SettingsActivity extends AppCompatActivity {
 
             CacheUtils.getInstance(this).saveAmountForTransaction(amount);
         }
+
+        setResult(Activity.RESULT_OK, new Intent());
+        finish();
     }
 
 
@@ -45,7 +62,14 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
+        setDefaults();
+    }
+
+    private void setDefaults() {
         mUserIdText.setText(CacheUtils.getInstance(this).getUserId());
+        mNameText.setText(CacheUtils.getInstance(this).getName());
+        mMobileText.setText(CacheUtils.getInstance(this).getMobile());
+        mEmailText.setText(CacheUtils.getInstance(this).getEmail());
         mAmountText.setText(Long.toString(CacheUtils.getInstance(this).getAmountForTransaction()));
     }
 }

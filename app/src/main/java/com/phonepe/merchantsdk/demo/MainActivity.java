@@ -1,5 +1,6 @@
 package com.phonepe.merchantsdk.demo;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -76,8 +77,19 @@ public class MainActivity extends AppCompatActivity {
         startCredit();
     }
 
+    @OnClick(R.id.id_account)
+    void showAccountDetails() {
+        String userId = CacheUtils.getInstance(this).getUserId();
+        String checksum = CheckSumUtils.getCheckSumForNonTransaction(Constants.MERCHANT_ID, userId, Constants.SALT, Constants.SALT_KEY_INDEX);
+        PhonePe.showAccountDetails(userId, checksum);
+    }
+
+    private String mMobileNo;
+    private String mEmail;
+    private String mName;
+
     //*********************************************************************
-    // Cife cycles
+    // Life cycles
     //*********************************************************************
 
     @Override
@@ -85,10 +97,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_new);
         ButterKnife.bind(this);
-        mDebitAmountTextView.setText("Rs. " + CacheUtils.getInstance(this).getAmountForTransaction());
-        mCreditAmountTextView.setText("Rs. " + CacheUtils.getInstance(this).getAmountForTransaction());
-
+        setDefaults();
         getWalletBalance();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == 100) {
+            setDefaults();
+        }
     }
 
     //*********************************************************************
@@ -107,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_settings:
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), 100);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -118,30 +136,48 @@ public class MainActivity extends AppCompatActivity {
     // Private class
     //*********************************************************************
 
+    private void setDefaults() {
+        mDebitAmountTextView.setText("Rs. " + CacheUtils.getInstance(this).getAmountForTransaction());
+        mCreditAmountTextView.setText("Rs. " + CacheUtils.getInstance(this).getAmountForTransaction());
+
+        mMobileNo = CacheUtils.getInstance(this).getMobile();
+        mEmail = CacheUtils.getInstance(this).getEmail();
+        mName = CacheUtils.getInstance(this).getName();
+    }
+
     private void startRegister() {
         String sampleUSerId = UUID.randomUUID().toString().substring(0, 15);
         final String txnId = UUID.randomUUID().toString().substring(0, 15);
 
         String checksum = CheckSumUtils.getCheckSumForRegister(Constants.MERCHANT_ID, txnId, Constants.SALT, Constants.SALT_KEY_INDEX);
 
-        SignUpRequest signUpRequest = new SignUpRequestBuilder()
+        SignUpRequestBuilder signUpRequestBuilder = new SignUpRequestBuilder()
                 .setUserId(sampleUSerId)
-                .setMobileNumber("9802836600")
-                .setEmail("test@test.com")
-                .setShortName("NewUser")
                 .setTransactionId(txnId)
-                .setChecksum(checksum).build();
+                .setChecksum(checksum);
 
-        PhonePe.initiateRegister(signUpRequest, new TransactionCompleteListener() {
+
+        if (!isEmpty(mMobileNo)) {
+            signUpRequestBuilder.setMobileNumber(mMobileNo);
+        }
+
+        if (!isEmpty(mEmail)) {
+            signUpRequestBuilder.setEmail(mEmail);
+        }
+
+        if (!isEmpty(mName)) {
+            signUpRequestBuilder.setShortName(mName);
+        }
+
+        PhonePe.initiateRegister(signUpRequestBuilder.build(), new TransactionCompleteListener() {
             @Override
             public void onTransactionComplete() {
-                Log.v("Main activity", "transaction complete");
-                trackTxnStatus(txnId);
+                trackTxnStatus(txnId, false);
             }
 
             @Override
             public void onTransactionCanceled() {
-                Log.v("Main activity", "transaction canceled");
+                trackTxnStatus(txnId, true);
             }
         });
     }
@@ -159,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                         resultTextView.setText("Wallet Balance: Unknown");
                     } else {
                         Long amountInRs = debitSuggestion.getAvailableBalanceInWallet() / 100;
-                        resultTextView.setText("Wallet Balance:" + amountInRs + "Rs");
+                        resultTextView.setText("Wallet Balance:" + amountInRs + "Rs.");
                     }
                 }
             }
@@ -178,12 +214,22 @@ public class MainActivity extends AppCompatActivity {
         String userId = CacheUtils.getInstance(this).getUserId();
         String checksum = CheckSumUtils.getCheckSumForPayment(Constants.MERCHANT_ID, txnId, amount * 100, Constants.SALT, Constants.SALT_KEY_INDEX);
 
-        UserInfo userInfo = new UserInfoBuilder()
-                .setUserId(userId)
-                .setMobileNumber("9902834400")
-                .setEmail("rao@gmail.com")
-                .setShortName("Pandeshwar")
-                .build();
+        UserInfoBuilder userInfoBuilder = new UserInfoBuilder()
+                .setUserId(userId);
+
+
+        if (!isEmpty(mMobileNo)) {
+            userInfoBuilder.setMobileNumber(mMobileNo);
+        }
+
+        if (!isEmpty(mEmail)) {
+            userInfoBuilder.setEmail(mEmail);
+        }
+
+        if (!isEmpty(mName)) {
+            userInfoBuilder.setShortName(mName);
+        }
+
 
         OrderInfo orderInfo = new OrderInfoBuilder()
                 .setOrderId("someOrderId")
@@ -195,21 +241,19 @@ public class MainActivity extends AppCompatActivity {
                 .setAmount(amount * 100)
                 .setPaymentInstrumentOption(instrumentOption)
                 .setOrderInfo(orderInfo)
-                .setUserInfo(userInfo)
+                .setUserInfo(userInfoBuilder.build())
                 .setChecksum(checksum)
                 .build();
 
         PhonePe.initiateDebit(debitRequest, new TransactionCompleteListener() {
             @Override
             public void onTransactionComplete() {
-                Log.v("Main activity", "transaction complete");
-                trackTxnStatus(txnId);
+                trackTxnStatus(txnId, false);
             }
 
             @Override
             public void onTransactionCanceled() {
-                resultTextView.setText("Transaction canceled");
-                Log.v("Main activity", "transaction canceled");
+                trackTxnStatus(txnId, true);
             }
         });
     }
@@ -225,12 +269,20 @@ public class MainActivity extends AppCompatActivity {
 
         String checksum = CheckSumUtils.getCheckSumForPayment(Constants.MERCHANT_ID, txnId, amount * 100, Constants.SALT, Constants.SALT_KEY_INDEX);
 
-        UserInfo userInfo = new UserInfoBuilder()
-                .setUserId(userId)
-                .setMobileNumber("9823123412")
-                .setEmail("test@test.com")
-                .setShortName("New User")
-                .build();
+        UserInfoBuilder userInfoBuilder = new UserInfoBuilder()
+                .setUserId(userId);
+
+        if (!isEmpty(mMobileNo)) {
+            userInfoBuilder.setMobileNumber(mMobileNo);
+        }
+
+        if (!isEmpty(mEmail)) {
+            userInfoBuilder.setEmail(mEmail);
+        }
+
+        if (!isEmpty(mName)) {
+            userInfoBuilder.setShortName(mName);
+        }
 
         OrderInfo orderInfo = new OrderInfoBuilder()
                 .setOrderId("someOrderId")
@@ -242,43 +294,33 @@ public class MainActivity extends AppCompatActivity {
                 .setAmount(amount * 100)
                 .setOrderInfo(orderInfo)
                 .setCreditType(creditType)
-                .setUserInfo(userInfo)
+                .setUserInfo(userInfoBuilder.build())
                 .setChecksum(checksum)
                 .build();
 
         PhonePe.initiateCredit(creditRequest, new TransactionCompleteListener() {
             @Override
             public void onTransactionComplete() {
-                Log.v("Main activity", "transaction complete");
-                trackTxnStatus(txnId);
+                trackTxnStatus(txnId, false);
             }
 
             @Override
             public void onTransactionCanceled() {
-                Log.v("Main activity", "transaction canceled");
+                Log.v("test", "onTransactionCanceled called");
+                trackTxnStatus(txnId, true);
             }
         });
     }
 
-    private void trackTxnStatus(String txnId) {
-        resultTextView.setVisibility(View.VISIBLE);
+    private void trackTxnStatus(String txnId, boolean wascanceled) {
+        startActivity(ResultActivity.getInstance(this, txnId, wascanceled));
+    }
 
-        String checksum = CheckSumUtils.getCheckSumForTransactionStatus(Constants.MERCHANT_ID, txnId, Constants.SALT, Constants.SALT_KEY_INDEX);
-        PhonePe.fetchTransactionStatus(checksum, txnId, new DataListenerContract<TransactionStatus>() {
-            @Override
-            public void onSuccess(TransactionStatus transactionStatus) {
-                if (transactionStatus != null) {
-                    resultTextView.setText(transactionStatus.getMessage());
-                } else {
-                    resultTextView.setText("Failed to load status of transaction");
-                }
-            }
-
-            @Override
-            public void onFailure(ErrorInfo error) {
-                resultTextView.setText("Failed to load status of transaction");
-            }
-        });
+    protected boolean isEmpty(String string) {
+        if (string == null || string.trim().equals("")) {
+            return true;
+        }
+        return false;
     }
 
     //*********************************************************************
