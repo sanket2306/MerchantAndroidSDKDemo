@@ -28,6 +28,11 @@
             android:label="Settings"
             android:theme="@style/AppTheme" />
 
+        <activity
+            android:name=".ResultActivity"
+            android:label="Result"
+            android:theme="@style/AppTheme" />
+
         <!-- Replace it with your merchant id -->
         <meta-data
             android:name="com.phonepe.android.sdk.MerchantId"
