@@ -1,6 +1,5 @@
 package com.phonepe.merchantsdk.demo;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.phonepe.android.sdk.api.PhonePe;
-import com.phonepe.android.sdk.api.PhonePeResult;
 import com.phonepe.android.sdk.api.TransactionCompleteListener;
 import com.phonepe.android.sdk.domain.DataListenerContract;
 import com.phonepe.android.sdk.domain.builders.CreditRequestBuilder;
@@ -21,7 +19,7 @@ import com.phonepe.android.sdk.domain.builders.DebitRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.OrderInfoBuilder;
 import com.phonepe.android.sdk.domain.builders.SignUpRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.UserInfoBuilder;
-import com.phonepe.android.sdk.models.APIError;
+import com.phonepe.android.sdk.models.ErrorInfo;
 import com.phonepe.android.sdk.models.api.CreditRequest;
 import com.phonepe.android.sdk.models.api.DebitRequest;
 import com.phonepe.android.sdk.models.api.OrderInfo;
@@ -151,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     private void getWalletBalance() {
         resultTextView.setText("Fetching wallet balance ...");
         String userId = CacheUtils.getInstance(this).getUserId();
-        String checksum = CheckSumUtils.getCheckSumForDebitSuggest(Constants.MERCHANT_ID, userId, Constants.SALT, Constants.SALT_KEY_INDEX);
+        String checksum = CheckSumUtils.getCheckSumForNonTransaction(Constants.MERCHANT_ID, userId, Constants.SALT, Constants.SALT_KEY_INDEX);
 
         PhonePe.fetchDebitSuggestion(checksum, userId, new DataListenerContract<DebitSuggestion>() {
             @Override
@@ -167,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(APIError error) {
+            public void onFailure(ErrorInfo error) {
                 resultTextView.setText("Failed to fetch wallet balance ...");
             }
         });
@@ -277,7 +275,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(APIError error) {
+            public void onFailure(ErrorInfo error) {
                 resultTextView.setText("Failed to load status of transaction");
             }
         });
