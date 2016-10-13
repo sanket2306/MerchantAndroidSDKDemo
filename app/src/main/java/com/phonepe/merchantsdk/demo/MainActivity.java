@@ -27,6 +27,7 @@ import com.phonepe.android.sdk.models.api.OrderInfo;
 import com.phonepe.android.sdk.models.api.SignUpRequest;
 import com.phonepe.android.sdk.models.api.UserInfo;
 import com.phonepe.android.sdk.models.enums.CreditType;
+import com.phonepe.android.sdk.models.enums.ErrorCode;
 import com.phonepe.android.sdk.models.enums.PayInstrumentOption;
 import com.phonepe.android.sdk.models.enums.WalletState;
 import com.phonepe.android.sdk.models.networking.response.DebitSuggestion;
@@ -176,8 +177,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionCanceled() {
-                trackTxnStatus(txnId, true);
+            public void onTransactionFailed(int code) {
+                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
             }
         });
     }
@@ -252,8 +253,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionCanceled() {
-                trackTxnStatus(txnId, true);
+            public void onTransactionFailed(int code) {
+                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
             }
         });
     }
@@ -305,9 +306,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionCanceled() {
-                Log.v("test", "onTransactionCanceled called");
-                trackTxnStatus(txnId, true);
+            public void onTransactionFailed(int code) {
+                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
             }
         });
     }
