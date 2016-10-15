@@ -9,29 +9,29 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.phonepe.android.sdk.api.AccountDetailsListener;
 import com.phonepe.android.sdk.api.PhonePe;
 import com.phonepe.android.sdk.api.TransactionCompleteListener;
 import com.phonepe.android.sdk.domain.DataListenerContract;
+import com.phonepe.android.sdk.domain.builders.AccountDetailsRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.CreditRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.DebitRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.OrderInfoBuilder;
 import com.phonepe.android.sdk.domain.builders.SignUpRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.UserInfoBuilder;
 import com.phonepe.android.sdk.models.ErrorInfo;
+import com.phonepe.android.sdk.models.api.AccountDetailsRequest;
 import com.phonepe.android.sdk.models.api.CreditRequest;
 import com.phonepe.android.sdk.models.api.DebitRequest;
 import com.phonepe.android.sdk.models.api.OrderInfo;
-import com.phonepe.android.sdk.models.api.SignUpRequest;
-import com.phonepe.android.sdk.models.api.UserInfo;
 import com.phonepe.android.sdk.models.enums.CreditType;
 import com.phonepe.android.sdk.models.enums.ErrorCode;
-import com.phonepe.android.sdk.models.enums.PayInstrumentOption;
+import com.phonepe.android.sdk.models.api.PayInstrumentOption;
 import com.phonepe.android.sdk.models.enums.WalletState;
 import com.phonepe.android.sdk.models.networking.response.DebitSuggestion;
-import com.phonepe.android.sdk.models.networking.response.TransactionStatus;
 import com.phonepe.android.sdk.utils.CheckSumUtils;
 import com.phonepe.merchantsdk.demo.utils.CacheUtils;
 import com.phonepe.merchantsdk.demo.utils.Constants;
@@ -43,8 +43,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
-
-    private static final String TAG = "MainActivity";
 
     @Bind(R.id.id_debit_amount)
     TextView mDebitAmountTextView;
@@ -65,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.id_register)
     void showRegisterDemo() {
-        startRegister();
+        startLoginRegister(false);
     }
 
     @OnClick(R.id.id_debit)
@@ -78,16 +76,33 @@ public class MainActivity extends AppCompatActivity {
         startCredit();
     }
 
-    @OnClick(R.id.id_account)
-    void showAccountDetails() {
-        String userId = CacheUtils.getInstance(this).getUserId();
-        String checksum = CheckSumUtils.getCheckSumForNonTransaction(Constants.MERCHANT_ID, userId, Constants.SALT, Constants.SALT_KEY_INDEX);
-        PhonePe.showAccountDetails(userId, checksum);
-    }
 
     private String mMobileNo;
     private String mEmail;
     private String mName;
+
+    @OnClick(R.id.id_account)
+    void showAccountDetails() {
+        String userId = CacheUtils.getInstance(this).getUserId();
+        //String userId = UUID.randomUUID().toString().substring(0, 15);
+        String checksum = CheckSumUtils.getCheckSumForNonTransaction(Constants.MERCHANT_ID, userId, Constants.SALT, Constants.SALT_KEY_INDEX);
+        AccountDetailsRequest request = new AccountDetailsRequestBuilder()
+                .setUserId(userId)
+                .setChecksum(checksum)
+                .build();
+
+        PhonePe.showAccountDetails(request, new AccountDetailsListener() {
+            @Override
+            public void onSignUpClicked() {
+                startLoginRegister(false);
+            }
+
+            @Override
+            public void onSignInClicked() {
+                startLoginRegister(true);
+            }
+        });
+    }
 
     //*********************************************************************
     // Life cycles
@@ -146,8 +161,12 @@ public class MainActivity extends AppCompatActivity {
         mName = CacheUtils.getInstance(this).getName();
     }
 
-    private void startRegister() {
+    private void startLoginRegister(boolean isLogin) {
         String sampleUSerId = UUID.randomUUID().toString().substring(0, 15);
+        if (isLogin) {
+            sampleUSerId = CacheUtils.getInstance(this).getUserId();
+        }
+
         final String txnId = UUID.randomUUID().toString().substring(0, 15);
 
         String checksum = CheckSumUtils.getCheckSumForRegister(Constants.MERCHANT_ID, txnId, Constants.SALT, Constants.SALT_KEY_INDEX);
@@ -173,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         PhonePe.initiateRegister(signUpRequestBuilder.build(), new TransactionCompleteListener() {
             @Override
             public void onTransactionComplete() {
-                trackTxnStatus(txnId, false);
+                Toast.makeText(MainActivity.this, "Complete", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -210,7 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startDebit() {
         Long amount = CacheUtils.getInstance(this).getAmountForTransaction();
-        PayInstrumentOption instrumentOption = PayInstrumentOption.ANY;
+        PayInstrumentOption instrumentOption = PayInstrumentOption.WALLET_ONLY;
         final String txnId = UUID.randomUUID().toString().substring(0, 15);
         String userId = CacheUtils.getInstance(this).getUserId();
         String checksum = CheckSumUtils.getCheckSumForPayment(Constants.MERCHANT_ID, txnId, amount * 100, Constants.SALT, Constants.SALT_KEY_INDEX);
@@ -233,8 +252,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         OrderInfo orderInfo = new OrderInfoBuilder()
-                .setOrderId("someOrderId")
-                .setMessage("Pay me for this order.")
+                .setOrderId("OD139924923")
+                .setMessage("Payment towards order No. OD139924923.")
                 .build();
 
         DebitRequest debitRequest = new DebitRequestBuilder()
@@ -249,11 +268,13 @@ public class MainActivity extends AppCompatActivity {
         PhonePe.initiateDebit(debitRequest, new TransactionCompleteListener() {
             @Override
             public void onTransactionComplete() {
+                Log.v("****", "Complete called");
                 trackTxnStatus(txnId, false);
             }
 
             @Override
             public void onTransactionFailed(int code) {
+                Log.v("****", "fail called");
                 trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
             }
         });
@@ -286,8 +307,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         OrderInfo orderInfo = new OrderInfoBuilder()
-                .setOrderId("someOrderId")
-                .setMessage("Pay me for this order.")
+                .setOrderId("OD139924923")
+                .setMessage("Payment towards order No. OD139924923.")
                 .build();
 
         CreditRequest creditRequest = new CreditRequestBuilder()
@@ -312,9 +333,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void trackTxnStatus(String txnId, boolean wascanceled) {
+    private void trackTxnStatus(final String txnId, final boolean wascanceled) {
         startActivity(ResultActivity.getInstance(this, txnId, wascanceled));
+        overridePendingTransition(0, 0);
     }
+
 
     protected boolean isEmpty(String string) {
         if (string == null || string.trim().equals("")) {
@@ -322,6 +345,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
 
     //*********************************************************************
     // End of the class
