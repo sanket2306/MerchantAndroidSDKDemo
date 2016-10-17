@@ -12,26 +12,24 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.phonepe.android.sdk.api.AccountDetailsListener;
 import com.phonepe.android.sdk.api.PhonePe;
-import com.phonepe.android.sdk.api.TransactionCompleteListener;
-import com.phonepe.android.sdk.domain.DataListenerContract;
-import com.phonepe.android.sdk.domain.builders.AccountDetailsRequestBuilder;
+import com.phonepe.android.sdk.base.api.listeners.DataListener;
+import com.phonepe.android.sdk.base.enums.CreditType;
+import com.phonepe.android.sdk.base.enums.ErrorCode;
+import com.phonepe.android.sdk.base.enums.WalletState;
+import com.phonepe.android.sdk.base.networking.response.DebitSuggestion;
 import com.phonepe.android.sdk.domain.builders.CreditRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.DebitRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.OrderInfoBuilder;
 import com.phonepe.android.sdk.domain.builders.SignUpRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.UserInfoBuilder;
-import com.phonepe.android.sdk.models.ErrorInfo;
-import com.phonepe.android.sdk.models.api.AccountDetailsRequest;
-import com.phonepe.android.sdk.models.api.CreditRequest;
-import com.phonepe.android.sdk.models.api.DebitRequest;
-import com.phonepe.android.sdk.models.api.OrderInfo;
-import com.phonepe.android.sdk.models.enums.CreditType;
-import com.phonepe.android.sdk.models.enums.ErrorCode;
-import com.phonepe.android.sdk.models.api.PayInstrumentOption;
-import com.phonepe.android.sdk.models.enums.WalletState;
-import com.phonepe.android.sdk.models.networking.response.DebitSuggestion;
+
+import com.phonepe.android.sdk.base.api.listeners.TransactionCompleteListener;
+import com.phonepe.android.sdk.base.api.listeners.AccountDetailsListener;
+import com.phonepe.android.sdk.base.api.models.CreditRequest;
+import com.phonepe.android.sdk.base.api.models.DebitRequest;
+import com.phonepe.android.sdk.base.api.models.OrderInfo;
+import com.phonepe.android.sdk.base.api.models.PayInstrumentOption;
 import com.phonepe.android.sdk.utils.CheckSumUtils;
 import com.phonepe.merchantsdk.demo.utils.CacheUtils;
 import com.phonepe.merchantsdk.demo.utils.Constants;
@@ -86,12 +84,8 @@ public class MainActivity extends AppCompatActivity {
         String userId = CacheUtils.getInstance(this).getUserId();
         //String userId = UUID.randomUUID().toString().substring(0, 15);
         String checksum = CheckSumUtils.getCheckSumForNonTransaction(Constants.MERCHANT_ID, userId, Constants.SALT, Constants.SALT_KEY_INDEX);
-        AccountDetailsRequest request = new AccountDetailsRequestBuilder()
-                .setUserId(userId)
-                .setChecksum(checksum)
-                .build();
 
-        PhonePe.showAccountDetails(request, new AccountDetailsListener() {
+        PhonePe.showAccountDetails(checksum, userId, new AccountDetailsListener() {
             @Override
             public void onSignUpClicked() {
                 startLoginRegister(false);
@@ -207,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
         String userId = CacheUtils.getInstance(this).getUserId();
         String checksum = CheckSumUtils.getCheckSumForNonTransaction(Constants.MERCHANT_ID, userId, Constants.SALT, Constants.SALT_KEY_INDEX);
 
-        PhonePe.fetchDebitSuggestion(checksum, userId, new DataListenerContract<DebitSuggestion>() {
+        PhonePe.fetchDebitSuggestion(checksum, userId, new DataListener<DebitSuggestion>() {
             @Override
             public void onSuccess(DebitSuggestion debitSuggestion) {
                 if (debitSuggestion != null) {
@@ -221,15 +215,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(ErrorInfo error) {
-                resultTextView.setText("Failed to fetch wallet balance ...");
+            public void onFailure(int errorCode) {
+                resultTextView.setText("Failed to fetch wallet balance:" + errorCode);
             }
         });
     }
 
     private void startDebit() {
         Long amount = CacheUtils.getInstance(this).getAmountForTransaction();
-        PayInstrumentOption instrumentOption = PayInstrumentOption.WALLET_ONLY;
+        PayInstrumentOption instrumentOption = PayInstrumentOption.ANY;
         final String txnId = UUID.randomUUID().toString().substring(0, 15);
         String userId = CacheUtils.getInstance(this).getUserId();
         String checksum = CheckSumUtils.getCheckSumForPayment(Constants.MERCHANT_ID, txnId, amount * 100, Constants.SALT, Constants.SALT_KEY_INDEX);
@@ -268,13 +262,11 @@ public class MainActivity extends AppCompatActivity {
         PhonePe.initiateDebit(debitRequest, new TransactionCompleteListener() {
             @Override
             public void onTransactionComplete() {
-                Log.v("****", "Complete called");
                 trackTxnStatus(txnId, false);
             }
 
             @Override
             public void onTransactionFailed(int code) {
-                Log.v("****", "fail called");
                 trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
             }
         });
@@ -340,10 +332,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected boolean isEmpty(String string) {
-        if (string == null || string.trim().equals("")) {
-            return true;
-        }
-        return false;
+        return string == null || string.trim().equals("");
     }
 
 

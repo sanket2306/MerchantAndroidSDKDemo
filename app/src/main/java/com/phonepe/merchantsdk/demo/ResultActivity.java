@@ -10,11 +10,10 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.phonepe.android.sdk.base.api.listeners.DataListener;
+import com.phonepe.android.sdk.base.networking.response.TransactionStatus;
 import com.phonepe.merchantsdk.demo.utils.Constants;
 import com.phonepe.android.sdk.api.PhonePe;
-import com.phonepe.android.sdk.domain.DataListenerContract;
-import com.phonepe.android.sdk.models.ErrorInfo;
-import com.phonepe.android.sdk.models.networking.response.TransactionStatus;
 import com.phonepe.android.sdk.utils.CheckSumUtils;
 
 import butterknife.Bind;
@@ -39,7 +38,7 @@ public class ResultActivity extends AppCompatActivity {
     Button mBackButton;
 
     @OnClick(R.id.id_back_button)
-    void onBackButtonPressed(){
+    void onBackButtonPressed() {
         onBackPressed();
     }
 
@@ -81,7 +80,7 @@ public class ResultActivity extends AppCompatActivity {
         mTextView.setText("Fetching status ...");
 
         String checksum = CheckSumUtils.getCheckSumForTransactionStatus(Constants.MERCHANT_ID, txnId, Constants.SALT, Constants.SALT_KEY_INDEX);
-        PhonePe.fetchTransactionStatus(checksum, txnId, new DataListenerContract<TransactionStatus>() {
+        PhonePe.fetchTransactionStatus(checksum, txnId, new DataListener<TransactionStatus>() {
             @Override
             public void onSuccess(TransactionStatus transactionStatus) {
                 mProgressBar.setVisibility(View.GONE);
@@ -94,7 +93,7 @@ public class ResultActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(ErrorInfo error) {
+            public void onFailure(int errorCode) {
                 mProgressBar.setVisibility(View.GONE);
                 mBackButton.setVisibility(View.VISIBLE);
                 mTextView.setText("Failed to load status of transaction");
