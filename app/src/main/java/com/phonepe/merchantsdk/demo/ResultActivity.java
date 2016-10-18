@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.phonepe.android.sdk.base.api.listeners.DataListener;
+import com.phonepe.android.sdk.base.listeners.DataListener;
 import com.phonepe.android.sdk.base.networking.response.TransactionStatus;
 import com.phonepe.merchantsdk.demo.utils.Constants;
 import com.phonepe.android.sdk.api.PhonePe;

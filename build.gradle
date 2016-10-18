@@ -6,9 +6,6 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
-
-        //Dependency for annotation processing, this would be used at compile time to generate code
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
 
@@ -17,7 +14,7 @@ allprojects {
         jcenter()
 
         maven {
-            url "http://artifactory.phonepe.com/content/repositories/snapshots/"
+            url "https://docs.phonepe.com/repository/maven-public/"
         }
     }
 }

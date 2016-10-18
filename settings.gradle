@@ -1,1 +1,1 @@
-include ':app', ':PhonePe-Merchantsdk'
+include ':app'

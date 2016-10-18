@@ -14,11 +14,12 @@
         <item name="ph_colorPrimary">@color/colorPrimary</item>
         <item name="ph_colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="ph_colorAccent">@color/colorAccent</item>
-        <item name="ph_textColor">#51154f</item>
-        <item name="ph_textColorAccent">#51154f</item>
-        <item name="ph_merchantName">Myntra</item>
+        <item name="ph_textColor">@color/secondary_text</item>
+        <item name="ph_textColorAccent">@color/secondary_text</item>
+        <item name="ph_enableToolbarShadow">true</item>
+        <item name="ph_merchantName">Merchant</item>
         <item name="ph_merchantLogo">
-            http://sqrone.in/wp-content/uploads/2016/04/26-1443262056-myntra-logo-image.jpg
+            https://d32dgd8o7pwmnt.cloudfront.net/images/merchants/200/200/M2306160483220675579140.png
         </item>
     </style>
 
