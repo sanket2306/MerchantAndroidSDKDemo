@@ -16,6 +16,7 @@ import com.phonepe.android.sdk.base.listeners.DataListener;
 import com.phonepe.android.sdk.base.enums.CreditType;
 import com.phonepe.android.sdk.base.enums.ErrorCode;
 import com.phonepe.android.sdk.base.enums.WalletState;
+import com.phonepe.android.sdk.base.models.ErrorInfo;
 import com.phonepe.android.sdk.base.networking.response.DebitSuggestion;
 import com.phonepe.android.sdk.domain.builders.CreditRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.DebitRequestBuilder;
@@ -30,6 +31,7 @@ import com.phonepe.android.sdk.base.models.DebitRequest;
 import com.phonepe.android.sdk.base.models.OrderInfo;
 import com.phonepe.android.sdk.base.models.PayInstrumentOption;
 import com.phonepe.android.sdk.utils.CheckSumUtils;
+import com.phonepe.merchantsdk.demo.utils.AppUtils;
 import com.phonepe.merchantsdk.demo.utils.CacheUtils;
 import com.phonepe.merchantsdk.demo.utils.Constants;
 
@@ -71,6 +73,11 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.id_credit)
     void showCreditDemo() {
         startCredit();
+    }
+
+    @OnClick(R.id.id_flipkart)
+    void showFlipkartDemo() {
+        startFlipkart();
     }
 
 
@@ -145,6 +152,12 @@ public class MainActivity extends AppCompatActivity {
     // Private class
     //*********************************************************************
 
+    private void startFlipkart()
+    {
+        Intent intent = new Intent(MainActivity.this, FlipkartActivity.class);
+        startActivity(intent);
+    }
+
     private void setDefaults() {
         mDebitAmountTextView.setText("Rs. " + CacheUtils.getInstance(this).getAmountForTransaction());
         mCreditAmountTextView.setText("Rs. " + CacheUtils.getInstance(this).getAmountForTransaction());
@@ -170,15 +183,15 @@ public class MainActivity extends AppCompatActivity {
                 .setChecksum(checksum);
 
 
-        if (!isEmpty(mMobileNo)) {
+        if (!AppUtils.isEmpty(mMobileNo)) {
             signUpRequestBuilder.setMobileNumber(mMobileNo);
         }
 
-        if (!isEmpty(mEmail)) {
+        if (!AppUtils.isEmpty(mEmail)) {
             signUpRequestBuilder.setEmail(mEmail);
         }
 
-        if (!isEmpty(mName)) {
+        if (!AppUtils.isEmpty(mName)) {
             signUpRequestBuilder.setShortName(mName);
         }
 
@@ -189,9 +202,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionFailed(int code) {
-                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
+            public void onTransactionFailed(ErrorInfo errorInfo) {
+                trackTxnStatus(txnId, errorInfo.getCode() == ErrorCode.ERROR_CANCELED);
             }
+
+
         });
     }
 
@@ -213,10 +228,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+
             @Override
-            public void onFailure(int errorCode) {
-                resultTextView.setText("Failed to fetch wallet balance:" + errorCode);
+            public void onFailure(ErrorInfo errorInfo) {
+                resultTextView.setText("Failed to fetch wallet balance:" + errorInfo.getCode());
             }
+
         });
     }
 
@@ -231,15 +248,15 @@ public class MainActivity extends AppCompatActivity {
                 .setUserId(userId);
 
 
-        if (!isEmpty(mMobileNo)) {
+        if (!AppUtils.isEmpty(mMobileNo)) {
             userInfoBuilder.setMobileNumber(mMobileNo);
         }
 
-        if (!isEmpty(mEmail)) {
+        if (!AppUtils.isEmpty(mEmail)) {
             userInfoBuilder.setEmail(mEmail);
         }
 
-        if (!isEmpty(mName)) {
+        if (!AppUtils.isEmpty(mName)) {
             userInfoBuilder.setShortName(mName);
         }
 
@@ -265,8 +282,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionFailed(int code) {
-                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
+            public void onTransactionFailed(ErrorInfo errorInfo) {
+                trackTxnStatus(txnId, errorInfo.getCode() == ErrorCode.ERROR_CANCELED);
             }
         });
     }
@@ -285,15 +302,15 @@ public class MainActivity extends AppCompatActivity {
         UserInfoBuilder userInfoBuilder = new UserInfoBuilder()
                 .setUserId(userId);
 
-        if (!isEmpty(mMobileNo)) {
+        if (!AppUtils.isEmpty(mMobileNo)) {
             userInfoBuilder.setMobileNumber(mMobileNo);
         }
 
-        if (!isEmpty(mEmail)) {
+        if (!AppUtils.isEmpty(mEmail)) {
             userInfoBuilder.setEmail(mEmail);
         }
 
-        if (!isEmpty(mName)) {
+        if (!AppUtils.isEmpty(mName)) {
             userInfoBuilder.setShortName(mName);
         }
 
@@ -318,8 +335,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionFailed(int code) {
-                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
+            public void onTransactionFailed(ErrorInfo errorInfo) {
+                trackTxnStatus(txnId, errorInfo.getCode() == ErrorCode.ERROR_CANCELED);
             }
         });
     }
@@ -328,12 +345,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(ResultActivity.getInstance(this, txnId, wascanceled));
         overridePendingTransition(0, 0);
     }
-
-
-    protected boolean isEmpty(String string) {
-        return string == null || string.trim().equals("");
-    }
-
 
     //*********************************************************************
     // End of the class

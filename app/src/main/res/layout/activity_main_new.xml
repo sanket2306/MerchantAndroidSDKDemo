@@ -189,6 +189,7 @@
 
         </LinearLayout>
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="170dp"
@@ -196,6 +197,41 @@
 
 
             <android.support.v7.widget.CardView
+                android:id="@+id/id_flipkart"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="4dp"
+                android:layout_weight="1"
+                android:background="#FFFFFF"
+                card_view:cardCornerRadius="4dp">
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:contentDescription="@null"
+                        android:src="@drawable/ic_pay" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="12dp"
+                        android:text="Flipkart"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/id_account"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -211,7 +247,6 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:id="@+id/id_account"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:contentDescription="@null"
@@ -224,11 +259,14 @@
                         android:layout_marginTop="12dp"
                         android:text="Account"
                         android:textStyle="bold" />
+
                 </LinearLayout>
+
 
             </android.support.v7.widget.CardView>
 
         </LinearLayout>
+
 
         <TextView
             android:id="@+id/id_result"

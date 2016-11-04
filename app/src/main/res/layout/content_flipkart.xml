@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_flipkart"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.phonepe.merchantsdk.demo.FlipkartActivity"
+    tools:showIn="@layout/app_bar_flipkart">
+
+        <ImageView
+            android:id="@+id/image01"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/image01" />
+
+        <ImageView
+            android:id="@+id/image02"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/image02"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/image03"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/image03"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/image04"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/image04"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/refund01"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/refund01"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/refund02"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/refund02"
+            android:visibility="gone" />
+
+        <View
+            android:id="@+id/clickBlocker"
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp" />
+
+</RelativeLayout>

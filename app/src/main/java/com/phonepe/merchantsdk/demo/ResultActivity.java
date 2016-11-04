@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.phonepe.android.sdk.base.listeners.DataListener;
+import com.phonepe.android.sdk.base.models.ErrorInfo;
 import com.phonepe.android.sdk.base.networking.response.TransactionStatus;
 import com.phonepe.merchantsdk.demo.utils.Constants;
 import com.phonepe.android.sdk.api.PhonePe;
@@ -93,7 +94,7 @@ public class ResultActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int errorCode) {
+            public void onFailure(ErrorInfo errorInfo) {
                 mProgressBar.setVisibility(View.GONE);
                 mBackButton.setVisibility(View.VISIBLE);
                 mTextView.setText("Failed to load status of transaction");
