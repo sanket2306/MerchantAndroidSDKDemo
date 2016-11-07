@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.phonepe.merchantsdk.demo.utils.CacheUtils;
@@ -63,6 +64,10 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
         setDefaults();
+
+        if(getSupportActionBar()!=null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void setDefaults() {
@@ -71,5 +76,16 @@ public class SettingsActivity extends AppCompatActivity {
         mMobileText.setText(CacheUtils.getInstance(this).getMobile());
         mEmailText.setText(CacheUtils.getInstance(this).getEmail());
         mAmountText.setText(Long.toString(CacheUtils.getInstance(this).getAmountForTransaction()));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+
+        }
+
+        return true;
     }
 }

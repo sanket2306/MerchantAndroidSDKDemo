@@ -4,9 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -35,13 +38,9 @@ public class ResultActivity extends AppCompatActivity {
     @Bind(R.id.id_progressBar)
     ProgressBar mProgressBar;
 
-    @Bind(R.id.id_back_button)
-    Button mBackButton;
+    @Bind(R.id.id_image_holder)
+    ImageView imageView;
 
-    @OnClick(R.id.id_back_button)
-    void onBackButtonPressed() {
-        onBackPressed();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +49,10 @@ public class ResultActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         readBundle(getIntent().getExtras());
         trackTxnStatus(mTxnId, mIsCanceled);
+
+        if(getSupportActionBar()!=null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     //*********************************************************************
@@ -68,16 +71,20 @@ public class ResultActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     private void trackTxnStatus(String txnId, boolean wasCanceled) {
         if (wasCanceled) {
             mProgressBar.setVisibility(View.GONE);
-            mBackButton.setVisibility(View.VISIBLE);
             mTextView.setText("Transaction was canceled");
+            imageView.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.cancel_image));
             return;
         }
 
         mProgressBar.setVisibility(View.VISIBLE);
-        mBackButton.setVisibility(View.GONE);
         mTextView.setText("Fetching status ...");
 
         String checksum = CheckSumUtils.getCheckSumForTransactionStatus(Constants.MERCHANT_ID, txnId, Constants.SALT, Constants.SALT_KEY_INDEX);
@@ -85,9 +92,9 @@ public class ResultActivity extends AppCompatActivity {
             @Override
             public void onSuccess(TransactionStatus transactionStatus) {
                 mProgressBar.setVisibility(View.GONE);
-                mBackButton.setVisibility(View.VISIBLE);
                 if (transactionStatus != null) {
                     mTextView.setText(transactionStatus.getMessage());
+                    imageView.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.order_confirm));
                 } else {
                     mTextView.setText("Failed to load status of transaction");
                 }
@@ -96,12 +103,21 @@ public class ResultActivity extends AppCompatActivity {
             @Override
             public void onFailure(ErrorInfo errorInfo) {
                 mProgressBar.setVisibility(View.GONE);
-                mBackButton.setVisibility(View.VISIBLE);
                 mTextView.setText("Failed to load status of transaction");
             }
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+
+        }
+
+        return true;
+    }
 
     //*********************************************************************
     // Utility methods

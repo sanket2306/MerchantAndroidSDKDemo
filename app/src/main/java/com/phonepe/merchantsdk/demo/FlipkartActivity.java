@@ -104,9 +104,7 @@ public class FlipkartActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        refund02.setVisibility(View.GONE);
-        setImageVisibility(image01,image02,image03,image04);
-        clickBlocker.setVisibility(View.GONE);
+        getToDefalultHomeState();
     }
 
     @Override
@@ -154,6 +152,7 @@ public class FlipkartActivity extends AppCompatActivity
                 setImageVisibility(image02, image01, image03, image04);
             } else if (image02.getVisibility() == View.VISIBLE) {
                 setImageVisibility(image01, image02, image03, image04);
+                clickBlocker.setVisibility(View.GONE);
             } else {
                 super.onBackPressed();
             }
@@ -168,8 +167,7 @@ public class FlipkartActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.drawer_home) {
-            setImageVisibility(image01,image02,image03,image04);
-
+            getToDefalultHomeState();
         } else if (id == R.id.drawer_refund) {
             setRefundVisibility(refund01,refund02);
 
@@ -205,6 +203,13 @@ public class FlipkartActivity extends AppCompatActivity
     // Private class
     //*********************************************************************
 
+    private void getToDefalultHomeState()
+    {
+        refund02.setVisibility(View.GONE);
+        refund01.setVisibility(View.GONE);
+        setImageVisibility(image01,image02,image03,image04);
+        clickBlocker.setVisibility(View.GONE);
+    }
 
     private void setImageVisibility(View visibleImage, View v2, View v3, View v4)
     {
