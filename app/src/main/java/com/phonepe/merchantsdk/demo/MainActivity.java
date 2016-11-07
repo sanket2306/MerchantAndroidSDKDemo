@@ -16,6 +16,7 @@ import com.phonepe.android.sdk.base.listeners.DataListener;
 import com.phonepe.android.sdk.base.enums.CreditType;
 import com.phonepe.android.sdk.base.enums.ErrorCode;
 import com.phonepe.android.sdk.base.enums.WalletState;
+import com.phonepe.android.sdk.base.models.ErrorInfo;
 import com.phonepe.android.sdk.base.networking.response.DebitSuggestion;
 import com.phonepe.android.sdk.domain.builders.CreditRequestBuilder;
 import com.phonepe.android.sdk.domain.builders.DebitRequestBuilder;
@@ -189,8 +190,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionFailed(int code) {
-                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
+            public void onTransactionFailed(ErrorInfo errorInfo) {
+                trackTxnStatus(txnId, errorInfo.getCode() == ErrorCode.ERROR_CANCELED);
             }
         });
     }
@@ -214,8 +215,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int errorCode) {
-                resultTextView.setText("Failed to fetch wallet balance:" + errorCode);
+            public void onFailure(ErrorInfo errorCode) {
+                resultTextView.setText("Failed to fetch wallet balance:" + errorCode.getCode());
             }
         });
     }
@@ -265,8 +266,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionFailed(int code) {
-                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
+            public void onTransactionFailed(ErrorInfo code) {
+                trackTxnStatus(txnId, code.getCode().equals(ErrorCode.ERROR_CANCELED));
             }
         });
     }
@@ -318,8 +319,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onTransactionFailed(int code) {
-                trackTxnStatus(txnId, code == ErrorCode.ERROR_CANCELED);
+            public void onTransactionFailed(ErrorInfo code) {
+                trackTxnStatus(txnId, code.getCode().equals(ErrorCode.ERROR_CANCELED));
             }
         });
     }
