@@ -126,10 +126,7 @@ public class FlipkartActivity extends AppCompatActivity
         ButterKnife.bind(this);
         setDefaults();
 
-        View headerLayout = navigationView.getHeaderView(0);
 
-        ((TextView)(headerLayout.findViewById(R.id.email) )).setText(mEmail);
-        ((TextView)(headerLayout.findViewById(R.id.username) )).setText(mName);
     }
 
     @Override
@@ -137,6 +134,7 @@ public class FlipkartActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK && requestCode == 100) {
             setDefaults();
+            setHeaders();
         }
     }
 
@@ -202,6 +200,16 @@ public class FlipkartActivity extends AppCompatActivity
     //*********************************************************************
     // Private class
     //*********************************************************************
+
+    private void setHeaders()
+    {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View headerLayout = navigationView.getHeaderView(0);
+
+        ((TextView)(headerLayout.findViewById(R.id.email) )).setText(mEmail);
+        ((TextView)(headerLayout.findViewById(R.id.username) )).setText(mName);
+    }
 
     private void getToDefalultHomeState()
     {
