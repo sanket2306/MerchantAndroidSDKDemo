@@ -80,6 +80,7 @@ public class ResultActivity extends AppCompatActivity {
         if (wasCanceled) {
             mProgressBar.setVisibility(View.GONE);
             mTextView.setText("Transaction was canceled");
+            imageView.setVisibility(View.VISIBLE);
             imageView.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.cancel_image));
             return;
         }
@@ -94,6 +95,7 @@ public class ResultActivity extends AppCompatActivity {
                 mProgressBar.setVisibility(View.GONE);
                 if (transactionStatus != null) {
                     mTextView.setText(transactionStatus.getMessage());
+                    imageView.setVisibility(View.VISIBLE);
                     imageView.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.order_confirm));
                 } else {
                     mTextView.setText("Failed to load status of transaction");

@@ -11,12 +11,14 @@
 
         <ImageView
             android:id="@+id/image01"
+            android:scaleType="fitXY"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/image01" />
 
         <ImageView
             android:id="@+id/image02"
+            android:scaleType="fitXY"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/image02"
@@ -24,6 +26,7 @@
 
         <ImageView
             android:id="@+id/image03"
+            android:scaleType="fitXY"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/image03"
@@ -31,6 +34,7 @@
 
         <ImageView
             android:id="@+id/image04"
+            android:scaleType="fitXY"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/image04"
@@ -38,6 +42,7 @@
 
         <ImageView
             android:id="@+id/refund01"
+            android:scaleType="fitXY"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/refund01"
@@ -45,6 +50,7 @@
 
         <ImageView
             android:id="@+id/refund02"
+            android:scaleType="fitXY"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/refund02"
@@ -52,9 +58,11 @@
 
         <View
             android:id="@+id/clickBlocker"
+            android:scaleType="fitXY"
             android:clickable="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="50dp" />
+            android:layout_marginBottom="50dp"
+            android:fadeScrollbars="false" />
 
 </RelativeLayout>
